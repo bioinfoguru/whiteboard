@@ -32,7 +32,7 @@ git remote add origin git@github.com:bioinfoguru/whiteboard.git
 
 REM ── Push ───────────────────────────────────────────────────────────────
 echo [+] Pushing to master on GitHub...
-git push -f -u origin master
+git push -u origin master
 
 echo.
 echo ========================================
