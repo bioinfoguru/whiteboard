@@ -25,7 +25,10 @@ if errorlevel 1 (
 REM ── Stage everything ───────────────────────────────────────────────────
 echo.
 echo [+] Staging changes...
-git add .
+"C:\Program Files\Git\cmd\git.exe" add --all
+if errorlevel 1 (
+    git add --all
+)
 
 REM ── Commit ─────────────────────────────────────────────────────────────
 echo [+] Committing...
@@ -39,9 +42,12 @@ echo [+] Setting remote...
 git remote remove origin 2>nul
 git remote add origin git@github.com:bioinfoguru/whiteboard.git
 
+REM ── Get branch name ───────────────────────────────────────────────────
+for /f "delims=" %%i in ('git branch --show-current') do set "BRANCH=%%i"
+echo [+] Pushing to %BRANCH% on GitHub...
+
 REM ── Push ───────────────────────────────────────────────────────────────
-echo [+] Pushing to GitHub...
-git push -u origin main
+git push -u origin "%BRANCH%"
 
 echo.
 echo ========================================
