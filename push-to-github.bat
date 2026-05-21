@@ -8,7 +8,7 @@ cd /d "%~dp0"
 
 REM ── Init repo if needed ────────────────────────────────────────────────
 if not exist ".git" (
-    echo No .git directory found. Initializing new repository....
+    echo No .git directory found. Initializing new repository...
     git init
 )
 
