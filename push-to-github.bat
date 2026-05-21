@@ -12,42 +12,27 @@ if not exist ".git" (
     git init
 )
 
-REM ── Configure git user if not set ─────────────────────────────────────
-git config user.name >nul 2>&1
-if errorlevel 1 (
-    git config user.name "bioinfoguru"
-)
-git config user.email >nul 2>&1
-if errorlevel 1 (
-    git config user.email "support@bioinfo.guru"
-)
+REM ── Configure git user directly ────────────────────────────────────────
+git config user.name "bioinfoguru"
+git config user.email "support@bioinfo.guru"
 
 REM ── Stage everything ───────────────────────────────────────────────────
 echo.
 echo [+] Staging changes...
-"C:\Program Files\Git\cmd\git.exe" add --all
-if errorlevel 1 (
-    git add --all
-)
+git add --all
 
 REM ── Commit ─────────────────────────────────────────────────────────────
 echo [+] Committing...
-git commit -m "deploy: update whiteboard" 2>nul
-if errorlevel 1 (
-    echo [i] Nothing new to commit (working tree clean).
-)
+git commit -m "deploy: update whiteboard"
 
 REM ── Set / update remote ────────────────────────────────────────────────
 echo [+] Setting remote...
-git remote remove origin 2>nul
+git remote remove origin >nul 2>&1
 git remote add origin git@github.com:bioinfoguru/whiteboard.git
 
-REM ── Set branch name ────────────────────────────────────────────────────
-set "BRANCH=master"
-echo [+] Pushing to %BRANCH% on GitHub...
-
 REM ── Push ───────────────────────────────────────────────────────────────
-git push -u origin %BRANCH%
+echo [+] Pushing to master on GitHub...
+git push -u origin master
 
 echo.
 echo ========================================
