@@ -43,7 +43,8 @@ git remote remove origin 2>nul
 git remote add origin git@github.com:bioinfoguru/whiteboard.git
 
 REM ── Get branch name ───────────────────────────────────────────────────
-for /f "delims=" %%i in ('git branch --show-current') do set "BRANCH=%%i"
+set "BRANCH=master"
+for /f "tokens=*" %%i in ('git rev-parse --abbrev-ref HEAD 2^>nul') do set "BRANCH=%%i"
 echo [+] Pushing to %BRANCH% on GitHub...
 
 REM ── Push ───────────────────────────────────────────────────────────────
