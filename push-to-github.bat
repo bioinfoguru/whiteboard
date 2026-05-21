@@ -19,7 +19,7 @@ if errorlevel 1 (
 )
 git config user.email >nul 2>&1
 if errorlevel 1 (
-    git config user.email "bioinfoguru@users.noreply.github.com"
+    git config user.email "support@bioinfo.guru"
 )
 
 REM ── Stage everything ───────────────────────────────────────────────────
