@@ -4,54 +4,55 @@ echo   Whiteboard - Git Push to GitHub
 echo   git@github.com:bioinfoguru/whiteboard.git
 echo ========================================
 
+REM ── Short (8.3) path avoids space issues in cmd ──────────────────────────
+set "GIT=C:\PROGRA~1\Git\cmd\git.exe"
+
+REM ── Ensure we are in the right directory ──────────────────────────────────
 cd /d "%~dp0"
 
-REM ── Init repo if needed ────────────────────────────────────────────────
-if not exist ".git" (
-    echo No .git directory found. Initializing new repository...
-    git init
+REM ── Init repo if needed ───────────────────────────────────────────────────
+%GIT% rev-parse --git-dir >nul 2>&1
+if errorlevel 1 (
+    echo No .git directory found. Initialising repository...
+    %GIT% init
 )
 
-REM ── Configure git user if not set ─────────────────────────────────────
-git config user.name >nul 2>&1
-if errorlevel 1 (
-    git config user.name "bioinfoguru"
-)
-git config user.email >nul 2>&1
-if errorlevel 1 (
-    git config user.email "bioinfoguru@users.noreply.github.com"
-)
+REM ── Configure git user ────────────────────────────────────────────────────
+%GIT% config user.name >nul 2>&1
+if errorlevel 1 %GIT% config user.name "bioinfoguru"
+%GIT% config user.email >nul 2>&1
+if errorlevel 1 %GIT% config user.email "bioinfoguru@users.noreply.github.com"
 
-REM ── Stage everything ───────────────────────────────────────────────────
+REM ── Stage ─────────────────────────────────────────────────────────────────
 echo.
 echo [+] Staging changes...
-"C:\Program Files\Git\cmd\git.exe" add --all
-if errorlevel 1 (
-    git add --all
-)
+%GIT% add --all
 
-REM ── Commit ─────────────────────────────────────────────────────────────
+REM ── Commit ────────────────────────────────────────────────────────────────
 echo [+] Committing...
-git commit -m "deploy: update whiteboard" 2>nul
+%GIT% commit -m "deploy: update whiteboard" 2>nul
 if errorlevel 1 (
     echo [i] Nothing new to commit (working tree clean).
+) else (
+    echo [+] Committed.
 )
 
-REM ── Set / update remote ────────────────────────────────────────────────
-echo [+] Setting remote...
-git remote remove origin 2>nul
-git remote add origin git@github.com:bioinfoguru/whiteboard.git
+REM ── Remote ────────────────────────────────────────────────────────────────
+echo [+] Setting remote origin...
+%GIT% remote remove origin 2>nul
+%GIT% remote add origin git@github.com:bioinfoguru/whiteboard.git
 
-REM ── Get branch name ───────────────────────────────────────────────────
-for /f "delims=" %%i in ('git branch --show-current') do set "BRANCH=%%i"
-echo [+] Pushing to %BRANCH% on GitHub...
+REM ── Branch name ───────────────────────────────────────────────────────────
+for /f "tokens=*" %%b in ('%GIT% branch --show-current') do set "BR=%%b"
+if "%BR%"=="" set "BR=master"
 
-REM ── Push ───────────────────────────────────────────────────────────────
-git push -u origin "%BRANCH%"
+REM ── Push ──────────────────────────────────────────────────────────────────
+echo [+] Pushing to %BR%...
+%GIT% push -u origin "%BR%"
 
 echo.
 echo ========================================
-echo   Push complete ^!
+echo   Push complete!
 echo   GitHub Actions will now deploy to
 echo   https://wb.bioinfo.guru
 echo ========================================
