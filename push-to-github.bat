@@ -42,17 +42,16 @@ echo [+] Setting remote...
 git remote remove origin 2>nul
 git remote add origin git@github.com:bioinfoguru/whiteboard.git
 
-REM ── Get branch name ───────────────────────────────────────────────────
+REM ── Set branch name ────────────────────────────────────────────────────
 set "BRANCH=master"
-for /f "tokens=*" %%i in ('git rev-parse --abbrev-ref HEAD 2^>nul') do set "BRANCH=%%i"
 echo [+] Pushing to %BRANCH% on GitHub...
 
 REM ── Push ───────────────────────────────────────────────────────────────
-git push -u origin "%BRANCH%"
+git push -u origin %BRANCH%
 
 echo.
 echo ========================================
-echo   Push complete ^!
+echo   Push complete !
 echo   GitHub Actions will now deploy to
 echo   https://wb.bioinfo.guru
 echo ========================================
