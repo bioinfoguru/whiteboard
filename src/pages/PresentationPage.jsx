@@ -113,8 +113,14 @@ export default function PresentationPage() {
     loadBoard(name)
       .then((data) => {
         if (!cancelled) {
-          setScene(data);
-          setFrames(getFrames(data));
+          const scene = {
+            ...data,
+            elements: data.elements.map((el) =>
+              el.type === "frame" ? { ...el, name: "" } : el
+            ),
+          };
+          setScene(scene);
+          setFrames(getFrames(scene));
         }
       })
       .catch(() => {
@@ -137,18 +143,22 @@ export default function PresentationPage() {
 
     const elements = frameElementsMap[frame.id] || [frame];
 
-    const raf = requestAnimationFrame(() => {
-      excalidrawAPI.scrollToContent(elements, {
-        fitToContent: true,
-        animate: true,
-        padding: 20,
+    const timer = setTimeout(() => {
+      requestAnimationFrame(() => {
+        excalidrawAPI.scrollToContent(elements, {
+          fitToContent: true,
+          animate: true,
+          padding: 20,
+        });
       });
-    });
+    }, 100);
 
-    return () => cancelAnimationFrame(raf);
+    return () => clearTimeout(timer);
   }, [slideIndex, frames, excalidrawAPI, frameElementsMap]);
 
   useEffect(() => {
+    let timer = null;
+
     function onFullscreenChange() {
       if (!document.fullscreenElement) return;
       if (!excalidrawAPI) return;
@@ -159,18 +169,22 @@ export default function PresentationPage() {
 
       const elements = frameElementsMap[frame.id] || [frame];
 
-      requestAnimationFrame(() => {
-        excalidrawAPI.scrollToContent(elements, {
-          fitToContent: true,
-          animate: true,
-          padding: 20,
+      timer = setTimeout(() => {
+        requestAnimationFrame(() => {
+          excalidrawAPI.scrollToContent(elements, {
+            fitToContent: true,
+            animate: true,
+            padding: 20,
+          });
         });
-      });
+      }, 150);
     }
 
     document.addEventListener("fullscreenchange", onFullscreenChange);
-    return () =>
+    return () => {
       document.removeEventListener("fullscreenchange", onFullscreenChange);
+      if (timer) clearTimeout(timer);
+    };
   }, [slideIndex, frames, excalidrawAPI, frameElementsMap]);
 
   useEffect(() => {
