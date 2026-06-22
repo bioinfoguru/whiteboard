@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Excalidraw } from "@excalidraw/excalidraw";
 import { loadBoard } from "../lib/loadBoard";
 import { getFrames } from "../lib/getFrames";
+import { focusFrame } from "../lib/focusFrame";
 import PresentationControls from "../components/PresentationControls";
 
 function Spinner() {
@@ -95,6 +96,9 @@ export default function PresentationPage() {
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
 
   const handleAPI = useCallback((api) => {
+    console.log("Excalidraw API", api);
+    console.log("Methods", Object.keys(api));
+
     setExcalidrawAPI(api);
   }, []);
 
@@ -135,11 +139,7 @@ export default function PresentationPage() {
 
     const timer = setTimeout(() => {
       requestAnimationFrame(() => {
-        excalidrawAPI.scrollToContent([frame], {
-          fitToContent: true,
-          animate: true,
-          padding: 20,
-        });
+        focusFrame(frame, excalidrawAPI);
       });
     }, 100);
 
@@ -157,11 +157,7 @@ export default function PresentationPage() {
       if (!frame) return;
 
       requestAnimationFrame(() => {
-        excalidrawAPI.scrollToContent([frame], {
-          fitToContent: true,
-          animate: false,
-          padding: 20,
-        });
+        focusFrame(frame, excalidrawAPI);
       });
     }
 
