@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Excalidraw } from "@excalidraw/excalidraw";
 import { loadBoard } from "../lib/loadBoard";
@@ -184,47 +184,6 @@ export default function PresentationPage() {
       if (timer) clearTimeout(timer);
     };
   }, [slideIndex, frames, excalidrawAPI]);
-
-  useEffect(() => {
-    let timer = null;
-
-    function refitCurrentFrame() {
-      if (!excalidrawAPI) return;
-      if (frames.length === 0) return;
-
-      const frame = frames[slideIndex];
-      if (!frame) return;
-
-      const elements = frameElementsMap[frame.id] || [frame];
-
-      requestAnimationFrame(() => {
-        excalidrawAPI.scrollToContent(elements, {
-          fitToContent: true,
-          animate: false,
-          padding: 20,
-        });
-      });
-    }
-
-    function onFullscreenChange() {
-      clearTimeout(timer);
-      timer = setTimeout(refitCurrentFrame, 300);
-    }
-
-    function onResize() {
-      clearTimeout(timer);
-      timer = setTimeout(refitCurrentFrame, 150);
-    }
-
-    document.addEventListener("fullscreenchange", onFullscreenChange);
-    window.addEventListener("resize", onResize);
-
-    return () => {
-      document.removeEventListener("fullscreenchange", onFullscreenChange);
-      window.removeEventListener("resize", onResize);
-      if (timer) clearTimeout(timer);
-    };
-  }, [slideIndex, frames, excalidrawAPI, frameElementsMap]);
 
   useEffect(() => {
     function handleKey(e) {
