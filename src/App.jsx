@@ -113,27 +113,7 @@ function BoardsList() {
 }
 
 function Home() {
-  return (
-    <div>
-      <Excalidraw />
-      <Link
-        to="/boards"
-        style={{
-          position: "absolute",
-          top: "1rem",
-          right: "1rem",
-          zIndex: 1000,
-          background: "rgba(0,0,0,0.05)",
-          padding: "0.5rem 1rem",
-          borderRadius: "0.5rem",
-          textDecoration: "none",
-          color: "#1e1e1e",
-        }}
-      >
-        Boards
-      </Link>
-    </div>
-  );
+  return <Excalidraw />;
 }
 
 function App() {
