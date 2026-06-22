@@ -107,13 +107,11 @@ export default function PresentationPage() {
       .then((data) => {
         if (!cancelled) {
           const frames = getFrames(data);
-          const scene = {
+          const presentationScene = {
             ...data,
-            elements: data.elements.map((el) =>
-              el.type === "frame" ? { ...el, name: "" } : el
-            ),
+            elements: data.elements.filter((el) => el.type !== "frame"),
           };
-          setScene(scene);
+          setScene(presentationScene);
           setFrames(frames);
         }
       })

@@ -26,22 +26,6 @@ export function focusFrame(frame, api, container) {
     scrollY,
   };
 
-  console.log({
-    frame: {
-      x: frame.x,
-      y: frame.y,
-      width: frame.width,
-      height: frame.height,
-    },
-    centerX,
-    centerY,
-    zoomWithMargin,
-    viewportWidth,
-    viewportHeight,
-    computedAppState: appState,
-    actualAppStateBefore: api.getAppState?.(),
-  });
-
   if (typeof api.setAppState === "function") {
     api.setAppState(appState);
   } else {
@@ -51,12 +35,4 @@ export function focusFrame(frame, api, container) {
       commitToHistory: false,
     });
   }
-
-  const after = api.getAppState?.();
-  console.log({
-    actualAppStateAfter: after,
-    actualZoom: after?.zoom,
-    actualScrollX: after?.scrollX,
-    actualScrollY: after?.scrollY,
-  });
 }
