@@ -2,6 +2,7 @@ import { Excalidraw } from "@excalidraw/excalidraw";
 import "@excalidraw/excalidraw/index.css";
 import { HashRouter, Routes, Route, Link, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import PresentationPage from "./pages/PresentationPage";
 
 function Spinner() {
   return (
@@ -64,7 +65,28 @@ function BoardViewerInner({ name }) {
   if (error) return <BoardNotFound name={name} />;
   if (!scene) return <Spinner />;
 
-  return <Excalidraw key={name} initialData={scene} />;
+  return (
+    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+      <Excalidraw key={name} initialData={scene} />
+      <Link
+        to={`/present/${name}`}
+        style={{
+          position: "absolute",
+          top: "1rem",
+          right: "1rem",
+          background: "#000000cc",
+          color: "white",
+          padding: "0.5rem 1rem",
+          borderRadius: "0.25rem",
+          textDecoration: "none",
+          zIndex: 1000,
+          fontSize: "0.9rem",
+        }}
+      >
+        🎥 Present
+      </Link>
+    </div>
+  );
 }
 
 function BoardViewer() {
@@ -123,6 +145,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/boards" element={<BoardsList />} />
         <Route path="/board/:name" element={<BoardViewer />} />
+        <Route path="/present/:name" element={<PresentationPage />} />
       </Routes>
     </HashRouter>
   );
