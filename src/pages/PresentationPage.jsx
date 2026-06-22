@@ -98,15 +98,6 @@ export default function PresentationPage() {
     setExcalidrawAPI(api);
   }, []);
 
-  const frameElementsMap = useMemo(() => {
-    if (!scene) return {};
-    const map = {};
-    frames.forEach((frame) => {
-      map[frame.id] = scene.elements.filter((e) => e.frameId === frame.id);
-    });
-    return map;
-  }, [scene, frames]);
-
   useEffect(() => {
     let cancelled = false;
 
@@ -142,11 +133,9 @@ export default function PresentationPage() {
     const frame = frames[slideIndex];
     if (!frame) return;
 
-    const elements = frameElementsMap[frame.id] || [frame];
-
     const timer = setTimeout(() => {
       requestAnimationFrame(() => {
-        excalidrawAPI.scrollToContent(elements, {
+        excalidrawAPI.scrollToContent([frame], {
           fitToContent: true,
           animate: true,
           padding: 20,
@@ -155,7 +144,46 @@ export default function PresentationPage() {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [slideIndex, frames, excalidrawAPI, frameElementsMap]);
+  }, [slideIndex, frames, excalidrawAPI]);
+
+  useEffect(() => {
+    let timer = null;
+
+    function refitCurrentFrame() {
+      if (!excalidrawAPI) return;
+      if (frames.length === 0) return;
+
+      const frame = frames[slideIndex];
+      if (!frame) return;
+
+      requestAnimationFrame(() => {
+        excalidrawAPI.scrollToContent([frame], {
+          fitToContent: true,
+          animate: false,
+          padding: 20,
+        });
+      });
+    }
+
+    function onFullscreenChange() {
+      clearTimeout(timer);
+      timer = setTimeout(refitCurrentFrame, 300);
+    }
+
+    function onResize() {
+      clearTimeout(timer);
+      timer = setTimeout(refitCurrentFrame, 150);
+    }
+
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+      window.removeEventListener("resize", onResize);
+      if (timer) clearTimeout(timer);
+    };
+  }, [slideIndex, frames, excalidrawAPI]);
 
   useEffect(() => {
     let timer = null;
