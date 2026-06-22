@@ -3,7 +3,6 @@ import FullscreenButton from "./FullscreenButton";
 function PresentationControls({
   currentSlide,
   totalSlides,
-  title,
   onPrev,
   onNext,
   onExit,
@@ -20,7 +19,7 @@ function PresentationControls({
         gap: "1rem",
         background: "rgba(0,0,0,0.75)",
         color: "white",
-        padding: "0.75rem 1.5rem",
+        padding: "0.35rem 1rem",
         borderRadius: "9999px",
         zIndex: 1000,
         backdropFilter: "blur(8px)",
@@ -46,18 +45,15 @@ function PresentationControls({
       <div
         style={{
           display: "flex",
-          flexDirection: "column",
           alignItems: "center",
           gap: "0.25rem",
-          minWidth: "8rem",
+          minWidth: "6rem",
+          justifyContent: "center",
         }}
       >
         <span style={{ fontSize: "0.875rem", opacity: 0.8 }}>
-          Slide {currentSlide + 1} / {totalSlides}
+          {currentSlide + 1} / {totalSlides}
         </span>
-        {title && (
-          <span style={{ fontSize: "1rem", fontWeight: 600 }}>{title}</span>
-        )}
       </div>
 
       <button

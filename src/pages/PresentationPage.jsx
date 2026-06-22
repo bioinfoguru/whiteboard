@@ -1,13 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Excalidraw } from "@excalidraw/excalidraw";
 import { loadBoard } from "../lib/loadBoard";
 import { getFrames } from "../lib/getFrames";
 import PresentationControls from "../components/PresentationControls";
-
-function getTitle(frame) {
-  return frame.name?.replace(/^\[\d+\]\s*/, "") || "";
-}
 
 function Spinner() {
   return (
@@ -91,6 +87,7 @@ function PresentationNotFound() {
 
 export default function PresentationPage() {
   const { name } = useParams();
+  const navigate = useNavigate();
   const [scene, setScene] = useState(null);
   const [frames, setFrames] = useState([]);
   const [error, setError] = useState(false);
@@ -100,6 +97,15 @@ export default function PresentationPage() {
   const handleAPI = useCallback((api) => {
     setExcalidrawAPI(api);
   }, []);
+
+  const frameElementsMap = useMemo(() => {
+    if (!scene) return {};
+    const map = {};
+    frames.forEach((frame) => {
+      map[frame.id] = scene.elements.filter((e) => e.frameId === frame.id);
+    });
+    return map;
+  }, [scene, frames]);
 
   useEffect(() => {
     let cancelled = false;
@@ -129,15 +135,43 @@ export default function PresentationPage() {
     const frame = frames[slideIndex];
     if (!frame) return;
 
+    const elements = frameElementsMap[frame.id] || [frame];
+
     const raf = requestAnimationFrame(() => {
-      excalidrawAPI.scrollToContent([frame], {
+      excalidrawAPI.scrollToContent(elements, {
         fitToContent: true,
         animate: true,
+        padding: 20,
       });
     });
 
     return () => cancelAnimationFrame(raf);
-  }, [slideIndex, frames, excalidrawAPI]);
+  }, [slideIndex, frames, excalidrawAPI, frameElementsMap]);
+
+  useEffect(() => {
+    function onFullscreenChange() {
+      if (!document.fullscreenElement) return;
+      if (!excalidrawAPI) return;
+      if (frames.length === 0) return;
+
+      const frame = frames[slideIndex];
+      if (!frame) return;
+
+      const elements = frameElementsMap[frame.id] || [frame];
+
+      requestAnimationFrame(() => {
+        excalidrawAPI.scrollToContent(elements, {
+          fitToContent: true,
+          animate: true,
+          padding: 20,
+        });
+      });
+    }
+
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, [slideIndex, frames, excalidrawAPI, frameElementsMap]);
 
   useEffect(() => {
     function handleKey(e) {
@@ -192,6 +226,7 @@ export default function PresentationPage() {
           if (document.fullscreenElement) {
             document.exitFullscreen();
           }
+          navigate(`/board/${name}`);
           break;
         default:
           handled = false;
@@ -207,10 +242,10 @@ export default function PresentationPage() {
     return () => {
       window.removeEventListener("keydown", handleKey, true);
     };
-  }, [frames.length]);
+    }, [name, navigate, frames.length]);
 
   if (error) {
-    return <PresentationNotFound name={name} />;
+    return <PresentationNotFound />;
   }
 
   if (!scene) {
@@ -221,17 +256,10 @@ export default function PresentationPage() {
     return (
       <NoFrames
         name={name}
-        onExit={() => {
-          if (document.fullscreenElement) {
-            document.exitFullscreen();
-          }
-        }}
+        onExit={navigate}
       />
     );
   }
-
-  const currentFrame = frames[slideIndex];
-  const title = currentFrame ? getTitle(currentFrame) : "";
 
   return (
     <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
@@ -245,7 +273,6 @@ export default function PresentationPage() {
       <PresentationControls
         currentSlide={slideIndex}
         totalSlides={frames.length}
-        title={title}
         onPrev={() => setSlideIndex((prev) => Math.max(prev - 1, 0))}
         onNext={() =>
           setSlideIndex((prev) => Math.min(prev + 1, frames.length - 1))
@@ -254,6 +281,7 @@ export default function PresentationPage() {
           if (document.fullscreenElement) {
             document.exitFullscreen();
           }
+          navigate(`/board/${name}`);
         }}
       />
     </div>
