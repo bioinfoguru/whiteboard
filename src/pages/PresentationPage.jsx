@@ -275,7 +275,7 @@ export default function PresentationPage() {
       <Excalidraw
         key={`present-${name}`}
         initialData={scene}
-        viewModeEnabled={false}
+        viewModeEnabled={true}
         zenModeEnabled={true}
         excalidrawAPI={handleAPI}
       />

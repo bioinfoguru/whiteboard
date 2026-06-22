@@ -15,8 +15,8 @@ export function focusFrame(frame, api, container) {
   const centerX = frame.x + frameWidth / 2;
   const centerY = frame.y + frameHeight / 2;
 
-  const scrollX = viewportWidth / 2 - centerX * zoomWithMargin;
-  const scrollY = viewportHeight / 2 - centerY * zoomWithMargin;
+  const scrollX = viewportWidth / 2 - centerX;
+  const scrollY = viewportHeight / 2 - centerY;
 
   const appState = {
     zoom: {
@@ -25,6 +25,20 @@ export function focusFrame(frame, api, container) {
     scrollX,
     scrollY,
   };
+
+  console.log({
+    frame: {
+      x: frame.x,
+      y: frame.y,
+      width: frame.width,
+      height: frame.height,
+    },
+    centerX,
+    centerY,
+    zoomWithMargin,
+    computedAppState: appState,
+    actualAppStateBefore: api.getAppState?.(),
+  });
 
   if (typeof api.setAppState === "function") {
     api.setAppState(appState);
@@ -35,4 +49,8 @@ export function focusFrame(frame, api, container) {
       commitToHistory: false,
     });
   }
+
+  console.log({
+    actualAppStateAfter: api.getAppState?.(),
+  });
 }
