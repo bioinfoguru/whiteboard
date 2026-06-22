@@ -1,6 +1,6 @@
-export function focusFrame(frame, api) {
-  const viewportWidth = window.innerWidth;
-  const viewportHeight = window.innerHeight;
+export function focusFrame(frame, api, container) {
+  const viewportWidth = container ? container.clientWidth : window.innerWidth;
+  const viewportHeight = container ? container.clientHeight : window.innerHeight;
 
   const frameWidth = frame.width;
   const frameHeight = frame.height;
@@ -15,8 +15,8 @@ export function focusFrame(frame, api) {
   const centerX = frame.x + frameWidth / 2;
   const centerY = frame.y + frameHeight / 2;
 
-  const scrollX = centerX * zoomWithMargin - viewportWidth / 2;
-  const scrollY = centerY * zoomWithMargin - viewportHeight / 2;
+  const scrollX = viewportWidth / 2 - centerX * zoomWithMargin;
+  const scrollY = viewportHeight / 2 - centerY * zoomWithMargin;
 
   const appState = {
     zoom: {
