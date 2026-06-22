@@ -96,9 +96,6 @@ export default function PresentationPage() {
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
 
   const handleAPI = useCallback((api) => {
-    console.log("Excalidraw API", api);
-    console.log("Methods", Object.keys(api));
-
     setExcalidrawAPI(api);
   }, []);
 
@@ -141,7 +138,7 @@ export default function PresentationPage() {
       requestAnimationFrame(() => {
         focusFrame(frame, excalidrawAPI);
       });
-    }, 100);
+    }, 300);
 
     return () => clearTimeout(timer);
   }, [slideIndex, frames, excalidrawAPI]);

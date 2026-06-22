@@ -18,13 +18,21 @@ export function focusFrame(frame, api) {
   const scrollX = centerX * zoomWithMargin - viewportWidth / 2;
   const scrollY = centerY * zoomWithMargin - viewportHeight / 2;
 
-  api.updateScene({
-    appState: {
-      zoom: {
-        value: zoomWithMargin,
-      },
-      scrollX,
-      scrollY,
+  const appState = {
+    zoom: {
+      value: zoomWithMargin,
     },
-  });
+    scrollX,
+    scrollY,
+  };
+
+  if (typeof api.setAppState === "function") {
+    api.setAppState(appState);
+  } else {
+    api.updateScene({
+      appState,
+      scrollToContent: false,
+      commitToHistory: false,
+    });
+  }
 }
