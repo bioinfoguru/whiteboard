@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Excalidraw } from "@excalidraw/excalidraw";
 import { loadBoard } from "../lib/loadBoard";
@@ -94,6 +94,7 @@ export default function PresentationPage() {
   const [error, setError] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
+  const containerRef = useRef(null);
 
   const handleAPI = useCallback((api) => {
     setExcalidrawAPI(api);
@@ -136,7 +137,7 @@ export default function PresentationPage() {
 
     const timer = setTimeout(() => {
       requestAnimationFrame(() => {
-        focusFrame(frame, excalidrawAPI);
+        focusFrame(frame, excalidrawAPI, containerRef.current);
       });
     }, 300);
 
@@ -154,7 +155,7 @@ export default function PresentationPage() {
       if (!frame) return;
 
       requestAnimationFrame(() => {
-        focusFrame(frame, excalidrawAPI);
+        focusFrame(frame, excalidrawAPI, containerRef.current);
       });
     }
 
@@ -267,11 +268,14 @@ export default function PresentationPage() {
   }
 
   return (
-    <div style={{ position: "relative", width: "100vw", height: "100vh" }}>
+    <div
+      ref={containerRef}
+      style={{ position: "relative", width: "100vw", height: "100vh" }}
+    >
       <Excalidraw
         key={`present-${name}`}
         initialData={scene}
-        viewModeEnabled={true}
+        viewModeEnabled={false}
         zenModeEnabled={true}
         excalidrawAPI={handleAPI}
       />
