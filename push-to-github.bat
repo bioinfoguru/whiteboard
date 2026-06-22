@@ -28,7 +28,7 @@ git commit -m "deploy: update whiteboard"
 REM ── Set / update remote ────────────────────────────────────────────────
 echo [+] Setting remote...
 git remote remove origin >nul 2>&1
-git remote add origin git@github.com:bioinfoguru/whiteboard.git
+git remote add origin https://github.com/bioinfoguru/whiteboard.git
 
 REM ── Push ───────────────────────────────────────────────────────────────
 echo [+] Pushing to master on GitHub...
