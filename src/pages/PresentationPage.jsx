@@ -95,6 +95,7 @@ export default function PresentationPage() {
   const [slideIndex, setSlideIndex] = useState(0);
   const [excalidrawAPI, setExcalidrawAPI] = useState(null);
   const [viewMode, setViewMode] = useState(true);
+  const [zenMode, setZenMode] = useState(true);
   const containerRef = useRef(null);
 
   const handleAPI = useCallback((api) => {
@@ -239,6 +240,12 @@ export default function PresentationPage() {
           e.stopPropagation();
           setViewMode((prev) => !prev);
           break;
+        case "z":
+        case "Z":
+          e.preventDefault();
+          e.stopPropagation();
+          setZenMode((prev) => !prev);
+          break;
         default:
           handled = false;
       }
@@ -281,7 +288,7 @@ export default function PresentationPage() {
         key={`present-${name}`}
         initialData={scene}
         viewModeEnabled={viewMode}
-        zenModeEnabled={true}
+        zenModeEnabled={zenMode}
         excalidrawAPI={handleAPI}
       />
       <PresentationControls
