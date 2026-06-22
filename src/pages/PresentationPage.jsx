@@ -160,8 +160,7 @@ export default function PresentationPage() {
   useEffect(() => {
     let timer = null;
 
-    function zoomToFrame() {
-      if (!document.fullscreenElement) return;
+    function refitCurrentFrame() {
       if (!excalidrawAPI) return;
       if (frames.length === 0) return;
 
@@ -173,22 +172,20 @@ export default function PresentationPage() {
       requestAnimationFrame(() => {
         excalidrawAPI.scrollToContent(elements, {
           fitToContent: true,
-          animate: true,
+          animate: false,
           padding: 20,
         });
       });
     }
 
     function onFullscreenChange() {
-      if (!document.fullscreenElement) return;
       clearTimeout(timer);
-      timer = setTimeout(zoomToFrame, 200);
+      timer = setTimeout(refitCurrentFrame, 300);
     }
 
     function onResize() {
-      if (!document.fullscreenElement) return;
       clearTimeout(timer);
-      timer = setTimeout(zoomToFrame, 100);
+      timer = setTimeout(refitCurrentFrame, 150);
     }
 
     document.addEventListener("fullscreenchange", onFullscreenChange);
