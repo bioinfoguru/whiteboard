@@ -113,6 +113,7 @@ export default function PresentationPage() {
     loadBoard(name)
       .then((data) => {
         if (!cancelled) {
+          const frames = getFrames(data);
           const scene = {
             ...data,
             elements: data.elements.map((el) =>
@@ -120,7 +121,7 @@ export default function PresentationPage() {
             ),
           };
           setScene(scene);
-          setFrames(getFrames(scene));
+          setFrames(frames);
         }
       })
       .catch(() => {
@@ -159,7 +160,7 @@ export default function PresentationPage() {
   useEffect(() => {
     let timer = null;
 
-    function onFullscreenChange() {
+    function zoomToFrame() {
       if (!document.fullscreenElement) return;
       if (!excalidrawAPI) return;
       if (frames.length === 0) return;
@@ -169,20 +170,33 @@ export default function PresentationPage() {
 
       const elements = frameElementsMap[frame.id] || [frame];
 
-      timer = setTimeout(() => {
-        requestAnimationFrame(() => {
-          excalidrawAPI.scrollToContent(elements, {
-            fitToContent: true,
-            animate: true,
-            padding: 20,
-          });
+      requestAnimationFrame(() => {
+        excalidrawAPI.scrollToContent(elements, {
+          fitToContent: true,
+          animate: true,
+          padding: 20,
         });
-      }, 150);
+      });
+    }
+
+    function onFullscreenChange() {
+      if (!document.fullscreenElement) return;
+      clearTimeout(timer);
+      timer = setTimeout(zoomToFrame, 200);
+    }
+
+    function onResize() {
+      if (!document.fullscreenElement) return;
+      clearTimeout(timer);
+      timer = setTimeout(zoomToFrame, 100);
     }
 
     document.addEventListener("fullscreenchange", onFullscreenChange);
+    window.addEventListener("resize", onResize);
+
     return () => {
       document.removeEventListener("fullscreenchange", onFullscreenChange);
+      window.removeEventListener("resize", onResize);
       if (timer) clearTimeout(timer);
     };
   }, [slideIndex, frames, excalidrawAPI, frameElementsMap]);
