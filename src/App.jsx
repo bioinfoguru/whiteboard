@@ -1,6 +1,6 @@
 import { Excalidraw } from "@excalidraw/excalidraw";
 import "@excalidraw/excalidraw/index.css";
-import { HashRouter, Routes, Route, Link, useParams } from "react-router-dom";
+import { HashRouter, Routes, Route, Link, useParams, Navigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import PresentationPage from "./pages/PresentationPage";
 
@@ -145,6 +145,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/boards" element={<BoardsList />} />
         <Route path="/board/:name" element={<BoardViewer />} />
+        <Route path="/present" element={<Navigate to="/boards" replace />} />
         <Route path="/present/:name" element={<PresentationPage />} />
       </Routes>
     </HashRouter>

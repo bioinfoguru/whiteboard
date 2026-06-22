@@ -85,7 +85,7 @@ function PresentationControls({
         }}
       />
 
-      <FullscreenButton onToggle={onExit} />
+      <FullscreenButton />
 
       <button
         onClick={onExit}

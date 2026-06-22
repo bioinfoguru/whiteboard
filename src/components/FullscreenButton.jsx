@@ -1,25 +1,24 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 
-function FullscreenButton({ onToggle }) {
+function FullscreenButton() {
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const handler = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener("fullscreenchange", handler);
+    return () => document.removeEventListener("fullscreenchange", handler);
+  }, []);
 
   const toggle = useCallback(() => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().then(() => {
-        setIsFullscreen(true);
-        onToggle?.();
-      }).catch(() => {
-        onToggle?.();
-      });
+      document.documentElement.requestFullscreen().catch(() => {});
     } else {
-      document.exitFullscreen().then(() => {
-        setIsFullscreen(false);
-        onToggle?.();
-      }).catch(() => {
-        onToggle?.();
-      });
+      document.exitFullscreen().catch(() => {});
     }
-  }, [onToggle]);
+  }, []);
 
   return (
     <button
